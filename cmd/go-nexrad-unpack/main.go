@@ -19,7 +19,7 @@ type ArchiveHeader struct {
 }
 
 func main() {
-	messages, err := nexrad.UnpackMessagesFromChunkFile("data/11/20220622-164844-002-I")
+	messages, err := nexrad.UnpackMessagesFromChunkFile("data/11/20220622-164844-007-I")
 
 	if err != nil {
 		logger.Error("Failed to read messages: %v", err)

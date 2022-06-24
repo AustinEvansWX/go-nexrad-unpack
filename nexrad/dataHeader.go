@@ -1,6 +1,8 @@
 package nexrad
 
-import "github.com/roguetechh/go-nexrad-unpack/bytereader"
+import (
+	"github.com/roguetechh/go-nexrad-unpack/bytereader"
+)
 
 type DataHeader struct {
 	RadarIdentifier          string
@@ -24,32 +26,32 @@ type DataHeader struct {
 
 func ReadDataHeader(reader *bytereader.Reader) (*DataHeader, error) {
 	header := DataHeader{
-		reader.ReadString(4),
-		reader.ReadUint(),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadFloat(),
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadShortUint(),
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadFloat(),
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadShortUint(),
+		reader.ReadString(4),   // Radar Identifier
+		reader.ReadUint(),      // Collection Time
+		reader.ReadShortUint(), // Julian Date
+		reader.ReadShortUint(), // Azimuth Number
+		reader.ReadFloat(),     // Azimuth Angle
+		reader.ReadBytes(1)[0], // CompressionIndicator
+		reader.ReadBytes(1)[0], // Spare
+		reader.ReadShortUint(), // Radial Length
+		reader.ReadBytes(1)[0], // Azimuth Resolution Spacing
+		reader.ReadBytes(1)[0], // Radial Status
+		reader.ReadBytes(1)[0], // Elevation Number
+		reader.ReadBytes(1)[0], // Cut Sector Number
+		reader.ReadFloat(),     // Elevation Angle
+		reader.ReadBytes(1)[0], // Radial Spot Blanking Status
+		reader.ReadBytes(1)[0], // Azimuth Indexing Mode
+		reader.ReadShortUint(), // Data Block Count
 		[]uint32{
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
+			reader.ReadUint(), // Volume Data Pointer
+			reader.ReadUint(), // Elevation Data Pointer
+			reader.ReadUint(), // Radial Data Pointer
+			reader.ReadUint(), // Moment Data Pointer
+			reader.ReadUint(), // Moment Data Pointer
+			reader.ReadUint(), // Moment Data Pointer
+			reader.ReadUint(), // Moment Data Pointer
+			reader.ReadUint(), // Moment Data Pointer
+			reader.ReadUint(), // Moment Data Pointer
 		},
 	}
 
@@ -61,7 +63,7 @@ func (dh *DataHeader) Validate() error {
 		{"Collection Time", float64(dh.CollectionTime), 0, 86399999},
 		{"Julian Date", float64(dh.JulianDate), 1, 65535},
 		{"Azimuth Number", float64(dh.AzimuthNumber), 1, 720},
-		{"Azimuth Angle", float64(dh.AzimuthNumber), 0, 359.956055},
+		{"Azimuth Angle", float64(dh.AzimuthNumber), 0, 720},
 		{"Compression Indicator", float64(dh.CompressionIndicator), 0, 3},
 		{"Radial Length", float64(dh.RadialLength), 9352, 14288},
 		{"Azimuth Resolution Spacing", float64(dh.AzimuthResolutionSpacing), 1, 2},
