@@ -13,5 +13,10 @@ func main() {
 		return
 	}
 
-	logger.Info("%d", len(messages))
+	for _, msg := range messages {
+		for _, data := range msg.MomentData {
+			data.MomentData = []float32{}
+		}
+		logger.PrettyPrintJSON(msg)
+	}
 }

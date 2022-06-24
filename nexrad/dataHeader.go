@@ -19,7 +19,7 @@ type DataHeader struct {
 	CutSectorNumber          uint8    // Sector Number within cut
 	ElevationAngle           float32  // Elevation angle at which radial radar data was collected
 	RadialSpotBlankingStatus uint8    // Spot blanking status for current radial, elevation scan and volume scan
-	AzimuthIndexingMode      uint8    // Azimuth indexing value (Set if azimuth angle is keyed to constant angles)
+	AzimuthIndexingMode      float32  // Azimuth indexing value (Set if azimuth angle is keyed to constant angles)
 	DataBlockCount           uint16   // Number of data blocks
 	Pointers                 []uint32 // Data block pointers
 }
@@ -40,7 +40,7 @@ func ReadDataHeader(reader *bytereader.Reader) (*DataHeader, error) {
 		CutSectorNumber:          reader.ReadBytes(1)[0],
 		ElevationAngle:           reader.ReadFloat(),
 		RadialSpotBlankingStatus: reader.ReadBytes(1)[0],
-		AzimuthIndexingMode:      reader.ReadBytes(1)[0],
+		AzimuthIndexingMode:      float32(reader.ReadBytes(1)[0]) / 100,
 		DataBlockCount:           reader.ReadShortUint(),
 		Pointers: []uint32{
 			reader.ReadUint(),
@@ -72,7 +72,7 @@ func (dh *DataHeader) Validate() error {
 		{"Cut Sector Number", float64(dh.CutSectorNumber), 0, 3},
 		{"Elevation Angle", float64(dh.ElevationAngle), -7, 70},
 		{"Radial Spot Blanking Status", float64(dh.RadialSpotBlankingStatus), 0, 4},
-		{"Azimuth Indexing Mode", float64(dh.AzimuthIndexingMode), 0, 100},
+		{"Azimuth Indexing Mode", float64(dh.AzimuthIndexingMode), 0, 1},
 		{"Data Block Count", float64(dh.DataBlockCount), 4, 9},
 	}
 

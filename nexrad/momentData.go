@@ -9,10 +9,10 @@ type MomentData struct {
 	DataName                      string
 	Reserved                      []byte
 	DataMomentGateCount           uint16
-	DataMomentRange               uint16
-	DataMomentRangeSampleInterval uint16
-	Tover                         uint16
-	SnrThreshold                  uint16
+	DataMomentRange               float32
+	DataMomentRangeSampleInterval float32
+	Tover                         float32
+	SnrThreshold                  float32
 	ControlFlags                  uint8
 	DataWordSize                  uint8
 	Scale                         float32
@@ -27,10 +27,10 @@ func ReadMomentData(reader *bytereader.Reader) (*MomentData, error) {
 		DataName:                      reader.ReadString(3),
 		Reserved:                      reader.ReadBytes(4),
 		DataMomentGateCount:           reader.ReadShortUint(),
-		DataMomentRange:               reader.ReadShortUint(),
-		DataMomentRangeSampleInterval: reader.ReadShortUint(),
-		Tover:                         reader.ReadShortUint(),
-		SnrThreshold:                  reader.ReadShortUint(),
+		DataMomentRange:               float32(reader.ReadShortUint()) / 1000,
+		DataMomentRangeSampleInterval: float32(reader.ReadShortUint()) / 1000,
+		Tover:                         float32(reader.ReadShortUint()) / 100,
+		SnrThreshold:                  float32(reader.ReadShortUint()) / 1000,
 		ControlFlags:                  reader.ReadBytes(1)[0],
 		DataWordSize:                  reader.ReadBytes(1)[0],
 		Scale:                         reader.ReadFloat(),
@@ -76,6 +76,10 @@ func isNextDataBlock(id uint32) bool {
 func (md *MomentData) Validate() error {
 	rangeChecks := []*RangeCheck{
 		{"Data Moment Gate Count", float64(md.DataMomentGateCount), 0, 1840},
+		{"DataMomentRange", float64(md.DataMomentRange), 0, 32.768},
+		{"DataMomentRangeSampleInterval", float64(md.DataMomentRangeSampleInterval), 0.25, 4},
+		{"Tover", float64(md.Tover), 0, 20},
+		{"SnrThreshold", float64(md.SnrThreshold), -12, 20},
 		{"Control Flags", float64(md.ControlFlags), 0, 3},
 		{"Data Word Size", float64(md.DataWordSize), 8, 16},
 		{"Scale", float64(md.Scale), 0, 65535},
