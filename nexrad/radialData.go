@@ -23,16 +23,16 @@ func ReadRadialData(dataHeader *DataHeader, reader *bytereader.Reader) (*RadialD
 	reader.ScanToNonZero()
 
 	radialData := RadialData{
-		reader.ReadString(1),
-		reader.ReadString(3),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		reader.ReadShortUint(),
-		reader.ReadBytes(2),
-		reader.ReadFloat(),
-		reader.ReadFloat(),
+		DataBlockType:                 reader.ReadString(1),
+		DataName:                      reader.ReadString(3),
+		Size:                          reader.ReadShortUint(),
+		UnambiguousRange:              reader.ReadShortUint(),
+		HorizontalNoiseLevel:          reader.ReadFloat(),
+		VerticalNoiseLevel:            reader.ReadFloat(),
+		NyquistVelocity:               reader.ReadShortUint(),
+		Spares:                        reader.ReadBytes(2),
+		HorizontalCalibrationConstant: reader.ReadFloat(),
+		VerticalCalibrationConstant:   reader.ReadFloat(),
 	}
 
 	return &radialData, radialData.Validate()

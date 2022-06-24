@@ -14,11 +14,11 @@ func ReadElevationData(dataHeader *DataHeader, reader *bytereader.Reader) (*Elev
 	reader.ScanToNonZero()
 
 	elevationData := ElevationData{
-		reader.ReadString(1),
-		reader.ReadString(3),
-		reader.ReadShortUint(),
-		reader.ReadShortInt(),
-		reader.ReadFloat(),
+		DataBlockType:       reader.ReadString(1),
+		DataName:            reader.ReadString(3),
+		Size:                reader.ReadShortUint(),
+		Atmos:               reader.ReadShortInt(),
+		CalibrationConstant: reader.ReadFloat(),
 	}
 
 	return &elevationData, elevationData.Validate()

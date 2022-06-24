@@ -15,14 +15,14 @@ type MessageHeader struct {
 
 func ReadMessageHeader(reader *bytereader.Reader) (*MessageHeader, error) {
 	header := MessageHeader{
-		reader.ReadShortUint(),
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadUint(),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
+		Size:                    reader.ReadShortUint(),
+		RDARedundantChannel:     reader.ReadBytes(1)[0],
+		MessageType:             reader.ReadBytes(1)[0],
+		IDSequenceNumber:        reader.ReadShortUint(),
+		JulianDate:              reader.ReadShortUint(),
+		MillisecondsOfDay:       reader.ReadUint(),
+		NumberOfMessageSegments: reader.ReadShortUint(),
+		MessageSegmentNumber:    reader.ReadShortUint(),
 	}
 
 	return &header, header.Validate()

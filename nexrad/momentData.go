@@ -23,20 +23,20 @@ type MomentData struct {
 
 func ReadMomentData(reader *bytereader.Reader) (*MomentData, error) {
 	momentData := MomentData{
-		reader.ReadString(1),
-		reader.ReadString(3),
-		reader.ReadBytes(4),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		[]float32{},
-		0,
+		DataBlockType:                 reader.ReadString(1),
+		DataName:                      reader.ReadString(3),
+		Reserved:                      reader.ReadBytes(4),
+		DataMomentGateCount:           reader.ReadShortUint(),
+		DataMomentRange:               reader.ReadShortUint(),
+		DataMomentRangeSampleInterval: reader.ReadShortUint(),
+		Tover:                         reader.ReadShortUint(),
+		SnrThreshold:                  reader.ReadShortUint(),
+		ControlFlags:                  reader.ReadBytes(1)[0],
+		DataWordSize:                  reader.ReadBytes(1)[0],
+		Scale:                         reader.ReadFloat(),
+		Offset:                        reader.ReadFloat(),
+		MomentData:                    []float32{},
+		MissingDataPoints:             0,
 	}
 
 	err := momentData.Validate()

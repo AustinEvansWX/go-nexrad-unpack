@@ -27,22 +27,22 @@ func ReadVolumeData(dataHeader *DataHeader, reader *bytereader.Reader) (*VolumeD
 	reader.ScanToNonZero()
 
 	volumeData := VolumeData{
-		reader.ReadString(1),
-		reader.ReadString(3),
-		reader.ReadShortUint(),
-		reader.ReadBytes(1)[0],
-		reader.ReadBytes(1)[0],
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		reader.ReadShortInt(),
-		reader.ReadShortUint(),
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		reader.ReadFloat(),
-		reader.ReadShortUint(),
-		reader.ReadShortUint(),
+		DataBlockType:                  reader.ReadString(1),
+		DataName:                       reader.ReadString(3),
+		Size:                           reader.ReadShortUint(),
+		VersionMajor:                   reader.ReadBytes(1)[0],
+		VersionMinor:                   reader.ReadBytes(1)[0],
+		Latitude:                       reader.ReadFloat(),
+		Longitude:                      reader.ReadFloat(),
+		SiteHeight:                     reader.ReadShortInt(),
+		FeedhornHeight:                 reader.ReadShortUint(),
+		CalibrationConstant:            reader.ReadFloat(),
+		HorizontalShvTxPower:           reader.ReadFloat(),
+		VerticalShvTxPower:             reader.ReadFloat(),
+		SystemDifferentialReflectivity: reader.ReadFloat(),
+		InitialSystemDifferentialPhase: reader.ReadFloat(),
+		VolumeCoveragePatternNumber:    reader.ReadShortUint(),
+		ProcessingStatus:               reader.ReadShortUint(),
 	}
 
 	return &volumeData, volumeData.Validate()
