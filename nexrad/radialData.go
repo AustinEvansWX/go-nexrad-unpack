@@ -20,7 +20,7 @@ type RadialData struct {
 }
 
 func ReadRadialData(dataHeader *DataHeader, reader *bytereader.Reader) (*RadialData, error) {
-	reader.Seek(dataHeader.Pointers[2] + MESSAGE_HEADER_SIZE)
+	reader.ScanToNonZero()
 
 	radialData := RadialData{
 		reader.ReadString(1),

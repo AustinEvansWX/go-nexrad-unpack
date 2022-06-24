@@ -96,17 +96,9 @@ func UnpackRawMessagesFromChunk(reader *bytereader.Reader) [][]byte {
 	messages := [][]byte{}
 
 	for {
-		overflow := false
+		reader.ScanToNonZero()
 
-		for reader.StaticReadBytes(1)[0] == 0 {
-			reader.StepForward(1)
-			if int(reader.Offset) > len(reader.Data) {
-				overflow = true
-				break
-			}
-		}
-
-		if overflow {
+		if int(reader.Offset) > len(reader.Data) {
 			break
 		}
 

@@ -1,6 +1,8 @@
 package nexrad
 
-import "github.com/roguetechh/go-nexrad-unpack/bytereader"
+import (
+	"github.com/roguetechh/go-nexrad-unpack/bytereader"
+)
 
 type MomentData struct {
 	DataBlockType                 string
@@ -68,7 +70,7 @@ func ReadMomentData(reader *bytereader.Reader) (*MomentData, error) {
 }
 
 func isNextDataBlock(id uint32) bool {
-	return id == 1146242374 || id == 1146766418 || id == 1146112073 || id == 1146243151 || id == 1145259600
+	return id == 1146242374 || id == 1146766418 || id == 1146112073 || id == 1146243151 || id == 1145259600 || id == 1146504524 || id == 1146312480
 }
 
 func (md *MomentData) Validate() error {

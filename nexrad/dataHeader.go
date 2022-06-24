@@ -5,22 +5,22 @@ import (
 )
 
 type DataHeader struct {
-	RadarIdentifier          string
-	CollectionTime           uint32
-	JulianDate               uint16
-	AzimuthNumber            uint16
-	AzimuthAngle             float32
-	CompressionIndicator     uint8
-	Spare                    uint8
-	RadialLength             uint16
-	AzimuthResolutionSpacing uint8
-	RadialStatus             uint8
-	ElevationNumber          uint8
-	CutSectorNumber          uint8
-	ElevationAngle           float32
-	RadialSpotBlankingStatus uint8
-	AzimuthIndexingMode      uint8
-	DataBlockCount           uint16
+	RadarIdentifier          string  // ICAO Radar Identifier
+	CollectionTime           uint32  // Radial data collection time in milliseconds past midnight GMT
+	JulianDate               uint16  // Current Julian date
+	AzimuthNumber            uint16  // Radial number within elevation scan
+	AzimuthAngle             float32 // Azimuth angle at which radial data was collected
+	CompressionIndicator     uint8   // Indicates if message type 31 is compressed and what method of compression is used. The Data Header Block is not compressed.
+	Spare                    uint8   // Spare and forces halfword alignment
+	RadialLength             uint16  // Uncompressed length of the radial in bytes including the Data Header block length
+	AzimuthResolutionSpacing uint8   // Azimuthal spacing between adjacent radials
+	RadialStatus             uint8   // Radial Status (e.g. first, last)
+	ElevationNumber          uint8   // Elevation number within volume scan
+	CutSectorNumber          uint8   // Sector Number within cut
+	ElevationAngle           float32 // Elevation angle at which radial radar data was collected
+	RadialSpotBlankingStatus uint8   // Spot blanking status for current radial, elevation scan and volume scan
+	AzimuthIndexingMode      uint8   // Azimuth indexing value (Set if azimuth angle is keyed to constant angles)
+	DataBlockCount           uint16  // Number of data blocks
 	Pointers                 []uint32
 }
 
@@ -65,7 +65,7 @@ func (dh *DataHeader) Validate() error {
 		{"Azimuth Number", float64(dh.AzimuthNumber), 1, 720},
 		{"Azimuth Angle", float64(dh.AzimuthNumber), 0, 720},
 		{"Compression Indicator", float64(dh.CompressionIndicator), 0, 3},
-		{"Radial Length", float64(dh.RadialLength), 9352, 14288},
+		{"Radial Length", float64(dh.RadialLength), 3824, 14288},
 		{"Azimuth Resolution Spacing", float64(dh.AzimuthResolutionSpacing), 1, 2},
 		{"Radial Status", float64(dh.RadialStatus), 0, 132},
 		{"Elevation Number", float64(dh.ElevationNumber), 1, 25},

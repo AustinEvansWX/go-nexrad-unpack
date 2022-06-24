@@ -11,7 +11,7 @@ type ElevationData struct {
 }
 
 func ReadElevationData(dataHeader *DataHeader, reader *bytereader.Reader) (*ElevationData, error) {
-	reader.Seek(dataHeader.Pointers[1] + MESSAGE_HEADER_SIZE)
+	reader.ScanToNonZero()
 
 	elevationData := ElevationData{
 		reader.ReadString(1),

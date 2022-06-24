@@ -1,6 +1,8 @@
 package nexrad
 
-import "github.com/roguetechh/go-nexrad-unpack/bytereader"
+import (
+	"github.com/roguetechh/go-nexrad-unpack/bytereader"
+)
 
 type VolumeData struct {
 	DataBlockType                  string
@@ -22,7 +24,7 @@ type VolumeData struct {
 }
 
 func ReadVolumeData(dataHeader *DataHeader, reader *bytereader.Reader) (*VolumeData, error) {
-	reader.Seek(dataHeader.Pointers[0] + MESSAGE_HEADER_SIZE)
+	reader.ScanToNonZero()
 
 	volumeData := VolumeData{
 		reader.ReadString(1),
