@@ -7,5 +7,4 @@ type Message struct {
 	ElevationData *ElevationData
 	RadialData    *RadialData
 	MomentData    map[string]*MomentData
-	MissingBytes  uint32
 }

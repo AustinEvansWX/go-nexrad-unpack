@@ -24,7 +24,7 @@ type VolumeData struct {
 }
 
 func ReadVolumeData(dataHeader *DataHeader, reader *bytereader.Reader) (*VolumeData, error) {
-	reader.ScanToNonZero()
+	reader.Seek(dataHeader.Pointers[0] + MESSAGE_HEADER_SIZE)
 
 	volumeData := VolumeData{
 		DataBlockType:                  reader.ReadString(1),

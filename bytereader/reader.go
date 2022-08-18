@@ -108,7 +108,7 @@ func (r *Reader) StaticReadFloat() float32 {
 func (r *Reader) ScanToNonZero() {
 	for r.StaticReadBytes(1)[0] == 0 {
 		r.StepForward(1)
-		if int(r.Offset) > len(r.Data) {
+		if int(r.Offset) >= len(r.Data) {
 			break
 		}
 	}

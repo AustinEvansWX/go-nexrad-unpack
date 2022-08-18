@@ -1,7 +1,6 @@
 package nexrad
 
 import (
-	"bufio"
 	"bytes"
 	"compress/bzip2"
 
@@ -10,18 +9,10 @@ import (
 
 func DecompressBzipChunk(chunk []byte) []byte {
 	reader := bytereader.NewReader(chunk)
-
 	blockSize := reader.ReadUint()
 	data := reader.ReadBytes(blockSize)
-
-	bz := bzip2.NewReader(bytes.NewReader(data))
-	scanner := bufio.NewScanner(bufio.NewReader(bz))
-
-	uncompressed := []byte{}
-
-	for scanner.Scan() {
-		uncompressed = append(uncompressed, scanner.Bytes()...)
-	}
-
+	uncompressed := make([]byte, blockSize*100)
+	bytesRead, _ := bzip2.NewReader(bytes.NewReader(data)).Read(uncompressed)
+	uncompressed = uncompressed[:bytesRead]
 	return uncompressed
 }

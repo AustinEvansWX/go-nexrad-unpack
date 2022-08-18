@@ -14,11 +14,30 @@ func UnpackMessagesFromChunkFile(filePath string) ([]*Message, error) {
 		return nil, err
 	}
 
+	return UnpackChunk(chunk)
+}
+
+func unpackRawMessagesFromChunk(reader *bytereader.Reader) [][]byte {
+	messages := [][]byte{}
+
+	for {
+		reader.StepForward(12)
+		if int(reader.Offset) >= len(reader.Data) {
+			break
+		}
+		messageSize := reader.StaticReadShortUint() * 2
+		messages = append(messages, reader.ReadBytes(uint32(messageSize)))
+	}
+
+	return messages
+}
+
+func UnpackChunk(chunk []byte) ([]*Message, error) {
 	data := DecompressBzipChunk(chunk)
 	reader := bytereader.NewReader(data)
 
 	messages := []*Message{}
-	rawMessages := UnpackRawMessagesFromChunk(reader)
+	rawMessages := unpackRawMessagesFromChunk(reader)
 
 	for _, rawMessage := range rawMessages {
 		rawMessageReader := bytereader.NewReader(rawMessage)
@@ -70,7 +89,7 @@ func UnpackMessagesFromChunkFile(filePath string) ([]*Message, error) {
 				continue
 			}
 
-			momentData, err := ReadMomentData(rawMessageReader)
+			momentData, err := ReadMomentData(rawMessageReader, pointer)
 
 			if err != nil {
 				logger.Error("Bad Moment Data: %v", err)
@@ -79,7 +98,6 @@ func UnpackMessagesFromChunkFile(filePath string) ([]*Message, error) {
 			}
 
 			message.MomentData[momentData.DataName] = momentData
-			message.MissingBytes += momentData.MissingDataPoints * (uint32(momentData.DataWordSize) / 8)
 		}
 
 		if badMomentData {
@@ -90,22 +108,4 @@ func UnpackMessagesFromChunkFile(filePath string) ([]*Message, error) {
 	}
 
 	return messages, nil
-}
-
-func UnpackRawMessagesFromChunk(reader *bytereader.Reader) [][]byte {
-	messages := [][]byte{}
-
-	for {
-		reader.ScanToNonZero()
-
-		if int(reader.Offset) > len(reader.Data) {
-			break
-		}
-
-		messageSize := reader.StaticReadShortUint() * 2
-		messages = append(messages, reader.ReadBytes(uint32(messageSize)))
-		reader.StepBackward(6)
-	}
-
-	return messages
 }

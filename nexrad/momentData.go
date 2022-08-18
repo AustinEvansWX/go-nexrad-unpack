@@ -18,10 +18,11 @@ type MomentData struct {
 	Scale                         float32
 	Offset                        float32
 	MomentData                    []float32
-	MissingDataPoints             uint32
 }
 
-func ReadMomentData(reader *bytereader.Reader) (*MomentData, error) {
+func ReadMomentData(reader *bytereader.Reader, pointer uint32) (*MomentData, error) {
+	reader.Seek(pointer + MESSAGE_HEADER_SIZE)
+
 	momentData := MomentData{
 		DataBlockType:                 reader.ReadString(1),
 		DataName:                      reader.ReadString(3),
@@ -36,7 +37,6 @@ func ReadMomentData(reader *bytereader.Reader) (*MomentData, error) {
 		Scale:                         reader.ReadFloat(),
 		Offset:                        reader.ReadFloat(),
 		MomentData:                    []float32{},
-		MissingDataPoints:             0,
 	}
 
 	err := momentData.Validate()
@@ -48,29 +48,14 @@ func ReadMomentData(reader *bytereader.Reader) (*MomentData, error) {
 	bytesPerWord := uint32(momentData.DataWordSize) / 8
 
 	for i := 0; i < int(momentData.DataMomentGateCount); i++ {
-		if isNextDataBlock(reader.StaticReadUint()) {
-			break
-		}
-
 		if bytesPerWord == 1 {
 			momentData.MomentData = append(momentData.MomentData, (float32(reader.ReadBytes(1)[0])-momentData.Offset)/momentData.Scale)
 		} else {
-			reader.StepForward(1)
-			if isNextDataBlock(reader.StaticReadUint()) {
-				break
-			}
-			reader.StepBackward(1)
 			momentData.MomentData = append(momentData.MomentData, (float32(reader.ReadShortUint())-momentData.Offset)/momentData.Scale)
 		}
 	}
 
-	momentData.MissingDataPoints += uint32(momentData.DataMomentGateCount) - uint32(len(momentData.MomentData))
-
 	return &momentData, err
-}
-
-func isNextDataBlock(id uint32) bool {
-	return id == 1146242374 || id == 1146766418 || id == 1146112073 || id == 1146243151 || id == 1145259600 || id == 1146504524 || id == 1146312480
 }
 
 func (md *MomentData) Validate() error {
