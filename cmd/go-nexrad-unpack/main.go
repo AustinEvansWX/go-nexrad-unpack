@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	messages, err := nexrad.UnpackMessagesFromChunkFile("../../data/421/20220620-005635-008-I")
+	messages, err := nexrad.UnpackMessagesFromChunkFile("./data/421/20220620-005635-008-I")
 
 	if err != nil {
 		logger.Error("Failed to read messages: %v", err)

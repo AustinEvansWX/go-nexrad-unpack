@@ -42,17 +42,11 @@ func ReadDataHeader(reader *bytereader.Reader) (*DataHeader, error) {
 		RadialSpotBlankingStatus: reader.ReadBytes(1)[0],
 		AzimuthIndexingMode:      float32(reader.ReadBytes(1)[0]) / 100,
 		DataBlockCount:           reader.ReadShortUint(),
-		Pointers: []uint32{
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-			reader.ReadUint(),
-		},
+		Pointers:                 []uint32{},
+	}
+
+	for i := 0; i < int(header.DataBlockCount); i++ {
+		header.Pointers = append(header.Pointers, reader.ReadUint())
 	}
 
 	return &header, header.Validate()
@@ -73,7 +67,7 @@ func (dh *DataHeader) Validate() error {
 		{"Elevation Angle", float64(dh.ElevationAngle), -7, 70},
 		{"Radial Spot Blanking Status", float64(dh.RadialSpotBlankingStatus), 0, 4},
 		{"Azimuth Indexing Mode", float64(dh.AzimuthIndexingMode), 0, 1},
-		{"Data Block Count", float64(dh.DataBlockCount), 4, 9},
+		{"Data Block Count", float64(dh.DataBlockCount), 4, 10},
 	}
 
 	return validateRanges(rangeChecks)
